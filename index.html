@@ -32,48 +32,40 @@
         }
 
         /* Right Side - Developer Info */
-        /* Right Side - Developer Info */
-.right-side {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #f5f5f5;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    width: fit-content;  /* Box will adjust as per image size */
-    margin: auto;
-}
+        .right-side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            width: fit-content;
+            margin: auto;
+        }
 
+        .right-side img {
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
 
-/* Developer Image */
-.right-side img {
-    width: 100%;  /* Responsive width */
-    max-width: 250px; /* Restrict max width */
-    height: auto;  /* Maintain aspect ratio */
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-}
+        .developer {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1DB954;
+            text-transform: uppercase;
+            margin-top: 10px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
 
-
-        /* Developer Name */
-        /* Developer Name */
-.developer {
-    font-size: 18px;
-    font-weight: bold;
-    color: #1DB954;
-    text-transform: uppercase;
-    margin-top: 10px; /* Adjust spacing */
-    background: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    position: relative; /* Removed absolute positioning */
-}
-
-
-        /* 🎯 RESPONSIVE DESIGN */
+        /* Responsive Design */
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -87,7 +79,7 @@
 
             .right-side {
                 width: 90%;
-                padding-bottom: 50px; /* Extra space for name */
+                padding-bottom: 50px;
             }
 
             .right-side img {
@@ -97,7 +89,6 @@
 
             .developer {
                 font-size: 18px;
-                bottom: -30px;
             }
 
             #cover {
@@ -108,12 +99,10 @@
     </style>
 </head>
 <body>
-    
     <div class="main-container">
-        <!-- Left Side - Player -->
         <div class="container">
             <h1>Spotify Clone</h1>
-            <img id="cover" src="cover.jpg" alt="Song Cover"> <!-- Cover image updates dynamically -->
+            <img id="cover" src="cover.jpg" alt="Song Cover">
             <h2 id="song-title">Song Name</h2>
             <audio id="audio"></audio>
 
@@ -141,22 +130,51 @@
             </ul>
         </div>
 
-        <!-- Right Side - Developer Info -->
         <div class="right-side">
             <img src="images/utkarsh photo.jpeg" alt="Developer Image">
             <p class="developer">Developed by: <b>Utkarsh Gupta</b></p>
         </div>
     </div>
-    
-
-
 
     <script>
-        // JavaScript to update song cover dynamically
         const audio = document.getElementById("audio");
         const cover = document.getElementById("cover");
         const songTitle = document.getElementById("song-title");
         const playlist = document.getElementById("playlist").getElementsByTagName("li");
+        const playButton = document.getElementById("play");
+        const currentTimeDisplay = document.getElementById("current-time");
+        const totalTimeDisplay = document.getElementById("total-time");
+        const progressBar = document.getElementById("progress-bar");
+
+        playButton.addEventListener("click", function () {
+            if (audio.paused) {
+                audio.play();
+                playButton.innerText = "⏸";
+            } else {
+                audio.pause();
+                playButton.innerText = "▶";
+            }
+        });
+
+        audio.addEventListener("loadedmetadata", function () {
+            totalTimeDisplay.innerText = formatTime(audio.duration);
+            progressBar.max = audio.duration;
+        });
+
+        audio.addEventListener("timeupdate", function () {
+            currentTimeDisplay.innerText = formatTime(audio.currentTime);
+            progressBar.value = audio.currentTime;
+        });
+
+        progressBar.addEventListener("input", function () {
+            audio.currentTime = progressBar.value;
+        });
+
+        function formatTime(time) {
+            let minutes = Math.floor(time / 60);
+            let seconds = Math.floor(time % 60);
+            return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+        }
 
         for (let i = 0; i < playlist.length; i++) {
             playlist[i].addEventListener("click", function () {
@@ -165,9 +183,10 @@
                 const title = this.getElementsByTagName("span")[0].innerText;
 
                 audio.src = songSrc;
-                cover.src = coverSrc; // Updates song cover dynamically
+                cover.src = coverSrc;
                 songTitle.innerText = title;
                 audio.play();
+                playButton.innerText = "⏸";
             });
         }
     </script>
